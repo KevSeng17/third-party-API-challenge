@@ -1,9 +1,11 @@
+const modalAddTaskBtn = document.getElementById("addTaskModalBtn");
 // Retrieve tasks and nextId from localStorage
 let taskList = [];
 let nextId = JSON.parse(localStorage.getItem("nextId"));
 function displayCurrentTime() {
   $("#time-display").text(dayjs().format("YYYY-MM-DD HH:mm:ss"));
 }
+
 
 // Todo: create a function to generate a unique task id
 function generateTaskId() {
@@ -14,20 +16,21 @@ function createTaskCard(task) {
   const card = document.createElement("div");
   card.classList.add("task-card");
     const elementTitle = document.createElement("h3");
-    elementTitle.textContent = title;
+    elementTitle.textContent = task.name;
     const elementDescription = document.createElement("p");
-    elementDescription.textContent = description;
+    elementDescription.textContent = task.description;
     const elementDeadline = document.createElement("p");
-    elementDeadline.textContent = `Deadline: ${deadline}`;
-    card.addEventListener('click', () => {
-      card.remove();
-    });
+    elementDeadline.textContent = `Deadline: ${task.deadline}`;
+    card.append(elementTitle);
+    card.append(elementDescription);
+    card.append(elementDeadline);
 
   // Make the card draggable
-  card.draggable({
-    revert: "invalid",
-    helper: "clone",
-  });
+  $(card).draggable();
+  // card.draggable({
+  //   revert: "invalid",
+  //   helper: "clone",
+  // });
 
   return card;
 }
@@ -40,12 +43,12 @@ function saveTasksToStorage(taskList) {
 
 function renderTaskList() {
   for (const task of taskList) {
-    renderTaskList(task);
+    const taskCard = createTaskCard(task);
+    console.log(taskCard);
+    $("#todo-cards").append(taskCard);
   }
 }
-$(document).ready(function () {
-  renderTaskList();
-});
+
 // const taskContainer = $('#task-list');
 // taskContainer.empty();
 // taskList.forEach(task => {
@@ -59,31 +62,28 @@ $(document).ready(function () {
 // });
 
 // Todo: create a function to handle adding a new task
-const modal = document.getElementById("myModal");
+// const modal = document.getElementById("myModal");
 const btn = document.getElementById("add-task-btn");
 // const span = document.getElementsByClassName('close')[0];
 const form = document.getElementById("task-form");
 
-btn.onclick = () => {
-  modal.style.display = "block";
-};
+// btn.onclick = () => {
+//   modal.style.display = "block";
+// };
 // span.onclick = () => {
 //   modal.style.display = ''
 // }
-window.onclick = (event) => {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-};
-$(document).ready(function () {
-  $("#task-form").submit(function (event) {
-    event.preventDefault();
-  });
-});
+// window.onclick = (event) => {
+//   if (event.target == modal) {
+//     modal.style.display = "none";
+//   }
+// };
+
 function handleAddTask(event) {
-  const title = $("#task-title").val();
+  event.preventDefault();
+  const title = $("#task-name-input").val();
   const description = $("#task-description").val();
-  const deadline = $("#task-deadline").val();
+  const deadline = $("#due-date-input").val();
   const newTask = {
     id: generateTaskId(),
     name: title,
@@ -93,9 +93,7 @@ function handleAddTask(event) {
   taskList.push(newTask);
   renderTaskList();
 }
-function generateTaskId() {
-  return "task-" + new Date().getTime();
-}
+
 
 // Todo: create a function to handle deleting a task
 function handleDeleteTask(event) {
@@ -112,7 +110,7 @@ let statusLanes = {
   done: [],
 };
 function handleDrop(event, ui) {
-  const taskId = ui.draggable.data("task-card");
+  const taskId = ui.draggable.data(createTaskCard);
   const newStatus = $(event.target).data("status");
   const currentStatus = getStatusLane(taskId);
   if (currentStatus) {
@@ -137,29 +135,23 @@ function getStatusLane(taskId) {
   }
   return null;
 }
-
+function makeLanesDroppable(lane) {
+  $(lane).droppable({
+    accept: ".task-card",
+    drop: function(event, ui) {
+      const card = ui.draggable.clone();
+      $(this).append(card);
+      ui.helper.remove();
+    }
+  });
+}
 // Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
 $(document).ready(function () {
   renderTaskList();
-  createTaskCard();
   makeLanesDroppable();
-  MakeDueDatePicker();
+  // MakeDueDatePicker();
   $("#add-task-btn").on("click", function () {
     $("myModal").css("display", "block");
   });
+  modalAddTaskBtn.addEventListener("click", handleAddTask);
 });
-//   $('task-form').submit(handleAddTask);
-//   $(document).on('click', 'delete', handleDeleteTask);
-//   function renderTaskList() {
-//     const taskContainer = $('#task-list');
-//     taskContainer.empty();
-//     taskList.forEach(task => {
-//       const taskCard = createTaskCard(task.title, task.description, task.deadline);
-//       taskContainer.append(taskCard);
-//     });
-//   }
-//   // function handleDrop(event, ui) {
-//   //   const taskId = ui.draggable.date('task-id');
-//   //   const newStatus = $(event.target).data('status');
-//   // }
-// });

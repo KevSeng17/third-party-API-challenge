@@ -35,18 +35,14 @@
             <input type="text" class="form-control" id="task-name-input" placeholder="Enter task name">
           </div>
           <div class="mb-3">
+            <label for="task-content" class="form-label">Task Description</label>
+            <textarea class="form-control" id="task-description" placeholder="Enter task description"></textarea>
+          </div>
+          <div class="mb-3">
             <label for="due-date-input" class="form-label">Due Date</label>
             <input type="date" class="form-control" id="due-date-input">
           </div>
-          <div class="mb-3">
-            <label for="project-type-input" class="form-label">Project Type</label>
-            <select id="project-type-input" class="form-select">
-              <option value="Home">School</option>
-              <option value="Work">Work</option>
-              <option value="School">School</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary">Add Task</button>
+          <button type="submit" id= "addTaskModalBtn" class= "btn btn-primary">Add Task</button>
         </form>
       </div>
     </div>
