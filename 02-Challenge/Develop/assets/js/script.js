@@ -124,7 +124,7 @@ function handleDrop(event, ui) {
         `Task ${taskId} moved to ${newStatus} lane. Update status lanes:`,
         statusLanes
       );
-    }
+    } handleDrop(newStatus);
   }
 }
 function getStatusLane(taskId) {
@@ -135,10 +135,11 @@ function getStatusLane(taskId) {
   }
   return null;
 }
-function makeLanesDroppable(lane) {
-  $(lane).droppable({
+function makeLanesDroppable(statusLanes) {
+  $(statusLanes).droppable({
     accept: ".task-card",
     drop: function(event, ui) {
+      event.preventDefault();
       const card = ui.draggable.clone();
       $(this).append(card);
       ui.helper.remove();
